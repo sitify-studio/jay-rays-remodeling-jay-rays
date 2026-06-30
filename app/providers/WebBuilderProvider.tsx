@@ -20,7 +20,7 @@ const isProdBuild = process.env.NODE_ENV === 'production';
 /** Site/theme refresh (formerly every 3s — far too aggressive for deployed APIs). */
 const SITE_POLL_INTERVAL_MS = readPollIntervalMs(
   'NEXT_PUBLIC_WEBBUILDER_SITE_POLL_INTERVAL_MS',
-  isProdBuild ? 0 : 15_000
+  isProdBuild ? 60_000 : 15_000
 );
 
 /** Pages, projects, services refresh (formerly every 5s each). */
@@ -194,6 +194,10 @@ export const WebBuilderProvider: React.FC<WebBuilderProviderProps> = ({ children
         business: s.business,
         footer: s.footer,
         socialLinks: s.socialLinks,
+        legal: s.legal,
+        files: s.files,
+        seo: s.seo,
+        updatedAt: s.updatedAt,
       });
 
     const intervalId = setInterval(async () => {

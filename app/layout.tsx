@@ -8,6 +8,7 @@ import { LenisProvider } from '@/app/components/cinematic/LenisProvider'
 import { AmbientFoundation } from '@/app/components/cinematic/AmbientFoundation'
 import { HeroIntroProvider } from '@/app/providers/HeroIntroProvider'
 import { Header } from '@/app/components/layout/Header'
+import { BuilderSchemaJsonLdClient } from '@/app/components/seo/BuilderSchemaJsonLdClient'
 
 export const metadata: Metadata = {
   title: 'Web Builder Site',
@@ -24,6 +25,7 @@ export default function RootLayout({
       <body suppressHydrationWarning className="antialiased">
         <ErrorBoundary>
           <WebBuilderProvider>
+            <BuilderSchemaJsonLdClient />
             <LanguageProvider>
               <LenisProvider>
                 <AmbientFoundation />

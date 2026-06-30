@@ -21,7 +21,7 @@ function UnderlineField({
 }) {
   return (
     <div className="space-y-1">
-      <label className="block text-xs wb-text-on-light-secondary">{label}</label>
+      <label className="block text-xs text-white/75">{label}</label>
       {children}
     </div>
   );
@@ -45,14 +45,13 @@ export const ContactSideForm: React.FC<ContactSideFormProps> = ({ isOpen, onClos
   });
 
   const underlineClass =
-    'w-full border-0 border-b border-[color-mix(in_srgb,var(--wb-primary)_35%,transparent)] bg-transparent py-1.5 text-sm wb-text-on-light outline-none transition-colors placeholder:opacity-40';
+    'w-full border-0 border-b border-white/35 bg-transparent py-1.5 text-sm text-white outline-none transition-colors placeholder:text-white/40';
 
   const onFocusLine = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => {
-    e.currentTarget.style.borderBottomColor = 'var(--wb-primary)';
+    e.currentTarget.style.borderBottomColor = '#ffffff';
   };
   const onBlurLine = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => {
-    e.currentTarget.style.borderBottomColor =
-      'color-mix(in srgb, var(--wb-primary) 35%, transparent)';
+    e.currentTarget.style.borderBottomColor = 'rgba(255, 255, 255, 0.35)';
   };
 
   useEffect(() => {
@@ -140,7 +139,7 @@ export const ContactSideForm: React.FC<ContactSideFormProps> = ({ isOpen, onClos
         style={{
           backgroundColor: colors.sectionBackgroundLight,
           borderColor: 'color-mix(in srgb, var(--wb-primary) 10%, transparent)',
-          color: colors.mainText,
+          color: '#ffffff',
           fontFamily: 'var(--wb-body-font, inherit)',
         }}
       >
@@ -148,8 +147,7 @@ export const ContactSideForm: React.FC<ContactSideFormProps> = ({ isOpen, onClos
           <button
             type="button"
             onClick={onClose}
-            className="p-1 wb-text-on-light-secondary transition-colors hover:opacity-80"
-            style={{ color: colors.primaryButton }}
+            className="p-1 text-white/75 transition-colors hover:text-white"
             aria-label="Close form"
           >
             <X size={20} strokeWidth={1.25} />
@@ -160,20 +158,14 @@ export const ContactSideForm: React.FC<ContactSideFormProps> = ({ isOpen, onClos
           <div className="mx-auto w-full max-w-[360px]">
             <header className="mb-5 space-y-2">
               <h2
-                className="text-[1.45rem] font-semibold leading-[1.15] md:text-[1.6rem]"
-                style={{
-                  fontFamily: 'var(--wb-heading-font, Georgia, serif)',
-                  background: `linear-gradient(135deg, ${colors.mainText} 0%, ${colors.primaryButton} 100%)`,
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                }}
+                className="text-[1.45rem] font-semibold leading-[1.15] text-white md:text-[1.6rem]"
+                style={{ fontFamily: 'var(--wb-heading-font, Georgia, serif)' }}
               >
                 Would you like
                 <br />
                 more information?
               </h2>
-              <p className="text-xs leading-snug wb-text-on-light-secondary">
+              <p className="text-xs leading-snug text-white/75">
                 If you have any questions, tell us when it is better for us to call you.
               </p>
             </header>
@@ -241,22 +233,18 @@ export const ContactSideForm: React.FC<ContactSideFormProps> = ({ isOpen, onClos
               <label className="flex cursor-pointer items-center gap-2.5">
                 <input
                   type="checkbox"
-                  className="h-3.5 w-3.5 shrink-0 rounded border accent-[var(--wb-primary)]"
-                  style={{
-                    borderColor: 'color-mix(in srgb, var(--wb-primary) 40%, transparent)',
-                  }}
+                  className="h-3.5 w-3.5 shrink-0 rounded border border-white/40 accent-[var(--wb-primary)]"
                   required
                   checked={formData.acceptedTerms}
                   onChange={(e) =>
                     setFormData({ ...formData, acceptedTerms: e.target.checked })
                   }
                 />
-                <span className="text-[10px] font-medium uppercase leading-snug tracking-[0.06em] wb-text-on-light-secondary">
+                <span className="text-[10px] font-medium uppercase leading-snug tracking-[0.06em] text-white/75">
                   I accept the{' '}
                   <Link
                     href="/privacy-policy"
-                    className="underline underline-offset-2 transition-opacity hover:opacity-80"
-                    style={{ color: colors.primaryButton }}
+                    className="text-white underline underline-offset-2 transition-opacity hover:opacity-80"
                     onClick={(e) => e.stopPropagation()}
                   >
                     privacy policy
@@ -270,7 +258,7 @@ export const ContactSideForm: React.FC<ContactSideFormProps> = ({ isOpen, onClos
                 className="flex w-full items-center justify-center py-3.5 text-xs font-bold uppercase tracking-[0.35em] transition-all duration-300 hover:opacity-95 hover:shadow-lg active:scale-[0.995] disabled:opacity-55"
                 style={{
                   backgroundColor: colors.primaryButton,
-                  color: 'var(--wb-text-on-dark, #fff)',
+                  color: '#ffffff',
                 }}
               >
                 {isSubmitting ? 'Sending…' : submitMessage || 'Send'}

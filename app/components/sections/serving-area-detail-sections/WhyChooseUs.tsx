@@ -97,7 +97,7 @@ export const WhyChooseUs: React.FC<WhyChooseUsProps> = ({ whyChooseUs, className
     <section
       className={cn('relative border-t', className)}
       style={{
-        backgroundColor: colors.sectionBackgroundLight,
+        backgroundColor: colors.pageBackground,
         borderColor,
         fontFamily: fonts.body,
       }}

@@ -33,18 +33,9 @@ export const CTA3Section: React.FC<CTA3SectionProps> = ({ cta3Section, className
               backgroundSize: 'cover',
               backgroundPosition: 'center',
             }
-          : { backgroundColor: themeColors.sectionBackground }
+          : { backgroundColor: themeColors.pageBackground }
       }
     >
-      <div
-        className="absolute inset-0"
-        style={{
-          background: backgroundImageUrl
-            ? 'linear-gradient(90deg, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.30) 52%, rgba(0,0,0,0.10) 100%)'
-            : `linear-gradient(135deg, ${themeColors.primaryButton}22 0%, rgba(0,0,0,0) 60%)`,
-        }}
-      />
-
       <div className="relative container mx-auto px-4">
         <div className="py-16 lg:py-24">
           <div className="max-w-4xl">

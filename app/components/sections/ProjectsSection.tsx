@@ -156,7 +156,7 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
     <section
       id="projects"
       className={cn('relative overflow-hidden py-20 lg:py-32', className)}
-      style={{ fontFamily: fonts.body }}
+      style={{ backgroundColor: colors.pageBackground, fontFamily: fonts.body }}
     >
       <div className="absolute inset-0" style={styles.sectionGradientBgAlt} />
 
@@ -273,7 +273,6 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                         </svg>
                       </div>
                     )}
-                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={styles.imageOverlay} />
                     <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                       <span
                         className={`rounded-full bg-white/90 px-5 py-2 text-xs font-medium uppercase tracking-wide`}

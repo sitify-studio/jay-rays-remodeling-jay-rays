@@ -164,16 +164,19 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ blogSection, className
     <section
       id="blog"
       className={cn('relative overflow-hidden py-20 lg:py-32', className)}
-      style={{ fontFamily: fonts.body }}
+      style={{ fontFamily: fonts.body, backgroundColor: colors.pageBackground }}
     >
-      <div className="absolute inset-0 bg-gradient-to-br from-[#f0f4f1] via-[#f8f8f5] to-white" />
-
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {[...Array(6)].map((_, i) => (
           <div
             key={i}
-            className="absolute w-1 h-1 bg-[#7A9A5C] rounded-full opacity-20 animate-float"
-            style={{ left: `${12 + i * 13}%`, top: `${8 + i * 12}%`, animationDelay: `${i * 0.6}s` }}
+            className="absolute h-1 w-1 rounded-full opacity-20 animate-float"
+            style={{
+              left: `${12 + i * 13}%`,
+              top: `${8 + i * 12}%`,
+              animationDelay: `${i * 0.6}s`,
+              backgroundColor: colors.primaryButton,
+            }}
           />
         ))}
       </div>
@@ -181,12 +184,18 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ blogSection, className
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-16 text-center lg:mb-20">
           <div
-            className={`inline-flex items-center justify-center w-16 h-16 rounded-full mb-8 shadow-lg transition-all duration-1000 ${
-              titleVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-75'
+            className={`mb-8 inline-flex h-16 w-16 items-center justify-center rounded-full shadow-lg transition-all duration-1000 ${
+              titleVisible ? 'scale-100 opacity-100' : 'scale-75 opacity-0'
             }`}
-            style={{ background: 'linear-gradient(135deg, #7A9A5C, #5D6939)' }}
+            style={styles.iconBadge}
           >
-            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg
+              className="h-8 w-8"
+              style={{ color: 'var(--wb-text-on-dark, #fff)' }}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -205,28 +214,25 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ blogSection, className
               )}
               style={{
                 fontFamily: fonts.heading,
-                background: 'linear-gradient(135deg, #242A26 0%, #7A9A5C 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
+                ...styles.titleGradient,
               }}
             >
               <TiptapRenderer content={titleContent} as="inline" />
             </h2>
           )}
 
-          <div className="flex items-center justify-center mb-6">
-            <div className="w-16 h-px bg-[#7A9A5C]/30" />
-            <div className="w-4 h-4 bg-[#7A9A5C] rounded-full mx-6 animate-pulse" />
-            <div className="w-16 h-px bg-[#7A9A5C]/30" />
+          <div className="mb-6 flex items-center justify-center">
+            <div className="h-px w-16" style={styles.dividerLine} />
+            <div className="mx-6 h-4 w-4 animate-pulse rounded-full" style={styles.dividerDot} />
+            <div className="h-px w-16" style={styles.dividerLine} />
           </div>
 
           {hasDescription && (
             <div
               ref={descRef}
               className={cn(
-                'mx-auto max-w-3xl text-lg text-[#242A26]/70 leading-relaxed transition-all duration-1000 delay-300',
-                descVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+                'mx-auto max-w-3xl text-lg leading-relaxed wb-text-on-light-secondary transition-all duration-1000 delay-300',
+                descVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
               )}
             >
               <TiptapRenderer content={descriptionContent} as="inline" />
@@ -236,7 +242,8 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ blogSection, className
           <div className="mt-10 flex justify-center">
             <Link
               href="/blog"
-              className="inline-block px-8 py-4 bg-[#2A2A2A] text-white font-medium text-sm tracking-wide uppercase transition-all duration-500 hover:bg-[#7A9A5C] hover:shadow-2xl hover:-translate-y-1"
+              className="inline-block px-8 py-4 text-sm font-medium uppercase tracking-wide transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl"
+              style={styles.primaryCta}
             >
               View All Articles →
             </Link>
@@ -244,7 +251,7 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ blogSection, className
         </div>
 
         {displayPosts.length === 0 ? (
-          <p className="text-center text-sm text-[#242A26]/60">
+          <p className="text-center text-sm wb-text-on-light-secondary">
             No published posts yet. Add posts in the builder to show them here.
           </p>
         ) : (
@@ -260,7 +267,10 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ blogSection, className
 
             {morePosts.length > 0 && (
               <div className="lg:col-span-5">
-                <p className="mb-6 text-sm font-medium uppercase tracking-wide text-[#7A9A5C]">
+                <p
+                  className="mb-6 text-sm font-medium uppercase tracking-wide"
+                  style={styles.accentText}
+                >
                   More Articles
                 </p>
                 <ul className="space-y-4">
@@ -303,7 +313,7 @@ function PostMeta({
   showDate: boolean;
   className?: string;
 }) {
-  const { fonts } = useSectionTheme();
+  const { colors, fonts, styles } = useSectionTheme();
   const dateLabel = formatPostDate(post.publishedAt || post.createdAt, showDate);
   const author = post.author?.name?.trim();
   const category = post.categories?.[0];
@@ -311,13 +321,20 @@ function PostMeta({
   return (
     <div
       className={cn(
-        'flex flex-wrap items-center gap-2 text-xs uppercase tracking-wide text-[#242A26]/50',
+        'flex flex-wrap items-center gap-2 text-xs uppercase tracking-wide wb-text-on-light-secondary',
         className
       )}
       style={{ fontFamily: fonts.body }}
     >
       {category && (
-        <span className="rounded-full border border-[#7A9A5C]/30 bg-[#7A9A5C]/10 px-2.5 py-0.5 font-medium text-[#7A9A5C]">
+        <span
+          className="rounded-full border px-2.5 py-0.5 font-medium"
+          style={{
+            borderColor: 'color-mix(in srgb, var(--wb-primary) 30%, transparent)',
+            backgroundColor: 'color-mix(in srgb, var(--wb-primary) 10%, transparent)',
+            color: colors.primaryButton,
+          }}
+        >
           {category}
         </span>
       )}
@@ -338,19 +355,19 @@ function FeaturedPostCard({
   showDate: boolean;
   className?: string;
 }) {
-  const { fonts } = useSectionTheme();
+  const { colors, fonts, styles } = useSectionTheme();
   const imgSrc = getPostImageSrc(post);
 
   return (
     <article
       className={cn(
-        'group overflow-hidden rounded-3xl border border-[#7A9A5C]/10 bg-white/90 backdrop-blur-sm shadow-lg transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl',
+        'group overflow-hidden rounded-3xl border bg-white/90 shadow-lg backdrop-blur-sm transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl',
         className
       )}
-      style={{ fontFamily: fonts.body }}
+      style={{ fontFamily: fonts.body, ...styles.card }}
     >
       <Link href={`/blog/${post.slug}`} className="block no-underline">
-        <div className="relative aspect-[16/10] overflow-hidden bg-[#e8f0ea]">
+        <div className="relative aspect-[16/10] overflow-hidden" style={styles.imagePlaceholder}>
           {imgSrc ? (
             <OptimizedImage
               src={imgSrc}
@@ -361,7 +378,10 @@ function FeaturedPostCard({
               priority
             />
           ) : (
-            <div className="flex h-full items-center justify-center text-[#7A9A5C]/30">
+            <div
+              className="flex h-full items-center justify-center"
+              style={{ color: 'color-mix(in srgb, var(--wb-primary) 30%, transparent)' }}
+            >
               <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
@@ -372,25 +392,24 @@ function FeaturedPostCard({
               </svg>
             </div>
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#7A9A5C]/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         </div>
 
         <div className="space-y-4 p-6 md:p-8">
           <PostMeta post={post} showDate={showDate} />
           {post.title && (
             <h3
-              className="text-2xl font-semibold text-[#242A26] md:text-3xl group-hover:text-[#7A9A5C] transition-colors"
+              className="text-2xl font-semibold wb-text-on-light transition-colors group-hover:text-[var(--wb-primary)] md:text-3xl"
               style={{ fontFamily: fonts.heading }}
             >
               {post.title}
             </h3>
           )}
           {showExcerpt && Boolean(post.excerpt) && (
-            <div className="line-clamp-3 text-sm leading-relaxed text-[#242A26]/70">
+            <div className="line-clamp-3 text-sm leading-relaxed wb-text-on-light-secondary">
               <TiptapRenderer content={post.excerpt} as="inline" />
             </div>
           )}
-          <span className="inline-block text-xs font-medium uppercase tracking-wide text-[#7A9A5C]">
+          <span className="inline-block text-xs font-medium uppercase tracking-wide" style={styles.accentText}>
             Read Article →
           </span>
         </div>
@@ -400,16 +419,19 @@ function FeaturedPostCard({
 }
 
 function MorePostCard({ post, showDate }: { post: BlogPostItem; showDate: boolean }) {
-  const { fonts } = useSectionTheme();
+  const { fonts, styles } = useSectionTheme();
   const imgSrc = getPostImageSrc(post);
 
   return (
     <Link
       href={`/blog/${post.slug}`}
-      className="group flex gap-4 overflow-hidden rounded-3xl border border-[#7A9A5C]/10 bg-white/90 p-4 shadow-md transition-all duration-500 hover:-translate-y-1 hover:shadow-xl no-underline"
-      style={{ fontFamily: fonts.body }}
+      className="group flex gap-4 overflow-hidden rounded-3xl border bg-white/90 p-4 shadow-md transition-all duration-500 hover:-translate-y-1 hover:shadow-xl no-underline"
+      style={{ fontFamily: fonts.body, ...styles.card }}
     >
-      <div className="relative h-20 w-24 shrink-0 overflow-hidden rounded-2xl bg-[#e8f0ea] sm:h-24 sm:w-28">
+      <div
+        className="relative h-20 w-24 shrink-0 overflow-hidden rounded-2xl sm:h-24 sm:w-28"
+        style={styles.imagePlaceholder}
+      >
         {imgSrc ? (
           <OptimizedImage
             src={imgSrc}
@@ -419,7 +441,10 @@ function MorePostCard({ post, showDate }: { post: BlogPostItem; showDate: boolea
             className="object-cover transition-transform duration-500 group-hover:scale-110"
           />
         ) : (
-          <div className="flex h-full items-center justify-center text-[#7A9A5C]/30">
+          <div
+            className="flex h-full items-center justify-center"
+            style={{ color: 'color-mix(in srgb, var(--wb-primary) 30%, transparent)' }}
+          >
             <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
@@ -436,13 +461,16 @@ function MorePostCard({ post, showDate }: { post: BlogPostItem; showDate: boolea
         <PostMeta post={post} showDate={showDate} className="mb-2" />
         {post.title && (
           <h4
-            className="text-base font-semibold text-[#242A26] sm:text-lg group-hover:text-[#7A9A5C] transition-colors"
+            className="text-base font-semibold wb-text-on-light transition-colors group-hover:text-[var(--wb-primary)] sm:text-lg"
             style={{ fontFamily: fonts.heading }}
           >
             {post.title}
           </h4>
         )}
-        <span className="mt-2 inline-block text-xs font-medium uppercase tracking-wide text-[#7A9A5C] opacity-0 transition-opacity group-hover:opacity-100">
+        <span
+          className="mt-2 inline-block text-xs font-medium uppercase tracking-wide opacity-0 transition-opacity group-hover:opacity-100"
+          style={styles.accentText}
+        >
           Read →
         </span>
       </div>

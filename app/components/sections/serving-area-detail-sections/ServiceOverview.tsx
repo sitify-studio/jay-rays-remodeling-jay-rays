@@ -203,12 +203,6 @@ export const ServiceOverview: React.FC<ServiceOverviewProps> = ({ overview, clas
                   sizes={IMAGE_SIZES.sectionWide}
                   className="object-cover"
                 />
-                <div
-                  className="pointer-events-none absolute inset-0"
-                  style={{
-                    background: `linear-gradient(to right, color-mix(in srgb, ${colors.pageBackground} 30%, transparent), transparent 40%)`,
-                  }}
-                />
               </div>
             </div>
           )}
@@ -227,7 +221,7 @@ export const ServiceOverview: React.FC<ServiceOverviewProps> = ({ overview, clas
                     className="flex flex-col rounded-sm border p-6 sm:p-7 transition-shadow hover:shadow-md"
                     style={{
                       borderColor,
-                      backgroundColor: colors.sectionBackgroundLight,
+                      backgroundColor: colors.pageBackground,
                     }}
                   >
                     <div className="flex items-start justify-between gap-3 mb-4">

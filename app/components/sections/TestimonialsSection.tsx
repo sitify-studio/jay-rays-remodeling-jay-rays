@@ -93,11 +93,9 @@ export function TestimonialsSection({ testimonialsSection, className }: Testimon
     <section
       id="testimonials"
       className={cn('py-20 lg:py-32 relative overflow-hidden', className)}
+      style={{ backgroundColor: theme.colors.pageBackground }}
     >
-      <div
-        className="absolute inset-0 animate-gradient-shift"
-        style={theme.styles.sectionGradientBg}
-      />
+      <div className="absolute inset-0" style={theme.styles.sectionGradientBg} />
 
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {[...Array(8)].map((_, i) => (
@@ -168,13 +166,6 @@ export function TestimonialsSection({ testimonialsSection, className }: Testimon
                 }`}
                 style={{ ...theme.styles.card, transitionDelay: `${index * 200}ms` }}
               >
-                <div
-                  className="absolute top-0 right-0 w-32 h-32 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-1000"
-                  style={{
-                    background: `linear-gradient(to bottom right, color-mix(in srgb, var(--wb-primary) 5%, transparent), transparent)`,
-                  }}
-                />
-
                 <div
                   className="absolute top-4 right-6 text-6xl font-serif animate-float opacity-10"
                   style={{ ...theme.styles.accentText, animationDelay: `${index * 0.5}s` }}

@@ -110,7 +110,7 @@ export const ServiceHighlightsSection: React.FC<ServiceHighlightsSectionProps> =
     <section
       ref={sectionRef}
       className={cn('relative py-3 md:py-8 lg:py-12 overflow-hidden', className)}
-      style={{ backgroundColor: themeColors.sectionBackground || '#FFFFFF' }}
+      style={{ backgroundColor: themeColors.pageBackground }}
     >
       <div className="max-w-[1800px] mx-auto px-8 md:px-16 lg:px-24">
         

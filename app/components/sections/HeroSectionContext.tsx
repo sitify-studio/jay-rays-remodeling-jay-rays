@@ -57,7 +57,7 @@ export function HeroSectionContext({ hero, page, className }: HeroSectionContext
   if (!title && !subtitle && !description) return null;
 
   return (
-    <section className={cn('relative pt-24 pb-16 lg:pt-36 lg:pb-28 overflow-hidden bg-white', className)}>
+    <section className={cn('relative pt-24 pb-16 lg:pt-36 lg:pb-28 overflow-hidden', className)} style={{ backgroundColor: colors.pageBackground }}>
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {[...Array(6)].map((_, i) => (
           <div
@@ -144,9 +144,9 @@ export function HeroSectionContext({ hero, page, className }: HeroSectionContext
             <div className="grid grid-cols-2 gap-4 h-[500px]">
               <div
                 className={`row-span-2 rounded-2xl overflow-hidden hover:scale-105 transition-all duration-500 group border border-[color-mix(in_srgb,var(--wb-primary)_20%,transparent)] ${imageGridVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-                style={{ transitionDelay: '200ms', backgroundColor: 'var(--wb-card-bg-light)' }}
+                style={{ transitionDelay: '200ms', backgroundColor: colors.pageBackground }}
               >
-                <div className="w-full h-full flex items-center justify-center relative overflow-hidden" style={{ backgroundColor: 'var(--wb-section-bg-light)' }}>
+                <div className="w-full h-full flex items-center justify-center relative overflow-hidden" style={{ backgroundColor: colors.pageBackground }}>
                   <div className="w-32 h-40 bg-gradient-to-b from-[#f4d1c9] to-[#e8b5a8] rounded-full relative group-hover:animate-pulse">
                     <div className="absolute top-8 left-1/2 transform -translate-x-1/2 w-16 h-16 bg-[#d49a8a] rounded-full animate-breathe" />
                     <div className="absolute top-20 left-1/2 transform -translate-x-1/2 w-20 h-24 bg-gradient-to-b from-[#8B9A7A] to-[#7A8A6A] rounded-t-full" />
@@ -160,7 +160,7 @@ export function HeroSectionContext({ hero, page, className }: HeroSectionContext
 
               <div
                 className={`rounded-2xl overflow-hidden hover:scale-105 hover:rotate-1 transition-all duration-500 group border border-[color-mix(in_srgb,var(--wb-primary)_20%,transparent)] ${imageGridVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-                style={{ transitionDelay: '400ms', backgroundColor: 'var(--wb-card-bg-light)' }}
+                style={{ transitionDelay: '400ms', backgroundColor: colors.pageBackground }}
               >
                 <div className="w-full h-full flex items-center justify-center relative">
                   <div className="w-24 h-32 relative group-hover:animate-bounce">
@@ -176,13 +176,13 @@ export function HeroSectionContext({ hero, page, className }: HeroSectionContext
 
               <div
                 className={`rounded-2xl overflow-hidden hover:scale-105 hover:-rotate-1 transition-all duration-500 group border border-[color-mix(in_srgb,var(--wb-primary)_20%,transparent)] ${imageGridVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-                style={{ transitionDelay: '600ms', backgroundColor: 'var(--wb-card-bg-light)' }}
+                style={{ transitionDelay: '600ms', backgroundColor: colors.pageBackground }}
               >
                 <div className="w-full h-full flex items-center justify-center relative">
                   <div className="w-20 h-24 relative">
                     <div
                       className="absolute top-2 left-1/2 transform -translate-x-1/2 w-16 h-16 rounded-full border-4 border-[var(--wb-primary)] opacity-60 group-hover:animate-spin"
-                      style={{ animationDuration: '3s', backgroundColor: 'var(--wb-section-bg-light)' }}
+                      style={{ animationDuration: '3s', backgroundColor: colors.pageBackground }}
                     />
                     <div className="absolute top-6 left-1/2 transform -translate-x-1/2 w-8 h-8 bg-[var(--wb-primary)] rounded-full animate-pulse" />
                     <div className="absolute bottom-2 left-2 w-3 h-3 bg-[var(--wb-primary)] rounded-full opacity-40 animate-bounce" style={{ animationDelay: '0.3s' }} />

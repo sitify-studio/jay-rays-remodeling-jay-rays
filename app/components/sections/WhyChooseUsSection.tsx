@@ -83,7 +83,7 @@ export function WhyChooseUsSection({ whyChooseUsSection, className }: WhyChooseU
     <section
       id="why-choose-us"
       className={cn('relative py-20 lg:py-32 overflow-hidden', className)}
-      style={{ fontFamily: fonts.body }}
+      style={{ backgroundColor: colors.pageBackground, fontFamily: fonts.body }}
     >
       <div className="absolute inset-0" style={styles.sectionGradientBg} />
 

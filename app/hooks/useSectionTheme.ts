@@ -24,13 +24,13 @@ export function useSectionTheme() {
           background: `linear-gradient(135deg, ${colors.primaryButton}, ${colors.hoverActive})`,
         } as React.CSSProperties,
         sectionGradientBg: {
-          background: `linear-gradient(135deg, ${colors.sectionBackgroundLight} 0%, ${colors.pageBackground} 50%, color-mix(in srgb, ${colors.primaryButton} 8%, ${colors.pageBackground}) 100%)`,
+          backgroundColor: colors.pageBackground,
         } as React.CSSProperties,
         sectionGradientBgAlt: {
-          background: `linear-gradient(135deg, ${colors.pageBackground} 0%, ${colors.sectionBackgroundLight} 100%)`,
+          backgroundColor: colors.pageBackground,
         } as React.CSSProperties,
         sectionGradientBgSoft: {
-          background: `linear-gradient(135deg, ${colors.sectionBackgroundLight} 0%, ${colors.pageBackground} 100%)`,
+          backgroundColor: colors.pageBackground,
         } as React.CSSProperties,
         card: {
           borderColor: 'color-mix(in srgb, var(--wb-primary) 10%, transparent)',
@@ -41,13 +41,13 @@ export function useSectionTheme() {
           backgroundColor: colors.cardBackground,
         } as React.CSSProperties,
         imagePlaceholder: {
-          backgroundColor: colors.sectionBackgroundLight,
+          backgroundColor: colors.pageBackground,
         } as React.CSSProperties,
         imageOverlay: {
-          background: `linear-gradient(to top, color-mix(in srgb, ${colors.primaryButton} 60%, transparent), transparent)`,
+          background: 'transparent',
         } as React.CSSProperties,
         imageOverlayHover: {
-          background: `linear-gradient(to top, color-mix(in srgb, ${colors.primaryButton} 80%, transparent), transparent)`,
+          background: 'transparent',
         } as React.CSSProperties,
         dividerDot: { backgroundColor: colors.primaryButton } as React.CSSProperties,
         dividerLine: {

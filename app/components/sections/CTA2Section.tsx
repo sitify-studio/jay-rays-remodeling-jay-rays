@@ -105,7 +105,7 @@ export const CTA2Section: React.FC<CTA2SectionProps> = ({ cta2Section, className
         className
       )}
       style={{
-        backgroundColor: customBg || (hasBgImage ? '#0c0c0c' : themeColors.sectionBackground),
+        backgroundColor: customBg || (hasBgImage ? '#0c0c0c' : themeColors.pageBackground),
         fontFamily: themeFonts.body,
       }}
     >
@@ -121,26 +121,13 @@ export const CTA2Section: React.FC<CTA2SectionProps> = ({ cta2Section, className
               className="object-cover"
             />
           </div>
-          <div
-            className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-black/20"
-            aria-hidden
-          />
         </div>
       ) : (
-        <>
-          <div
-            className="pointer-events-none absolute inset-0 opacity-30"
-            style={{
-              background: `linear-gradient(160deg, color-mix(in srgb, ${brandColor} 28%, transparent) 0%, transparent 50%)`,
-            }}
-            aria-hidden
-          />
-          <div
-            className="pointer-events-none absolute -right-[10%] top-1/2 h-[420px] w-[420px] -translate-y-1/2 rounded-full blur-[100px] opacity-15"
-            style={{ backgroundColor: brandColor }}
-            aria-hidden
-          />
-        </>
+        <div
+          className="pointer-events-none absolute -right-[10%] top-1/2 h-[420px] w-[420px] -translate-y-1/2 rounded-full blur-[100px] opacity-15"
+          style={{ backgroundColor: brandColor }}
+          aria-hidden
+        />
       )}
 
       <div className="container relative z-10 mx-auto px-6 lg:px-12">

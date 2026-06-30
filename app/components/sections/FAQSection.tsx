@@ -75,11 +75,8 @@ export function FAQSection({ faqSection, className }: FAQSectionProps) {
   );
 
   return (
-    <section className={cn('relative py-20 lg:py-32 overflow-hidden', className)}>
-      <div
-        className="absolute inset-0 animate-gradient-shift"
-        style={theme.styles.sectionGradientBg}
-      />
+    <section className={cn('relative py-20 lg:py-32 overflow-hidden', className)} style={{ backgroundColor: theme.colors.pageBackground }}>
+      <div className="absolute inset-0" style={theme.styles.sectionGradientBg} />
 
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {[...Array(6)].map((_, i) => (

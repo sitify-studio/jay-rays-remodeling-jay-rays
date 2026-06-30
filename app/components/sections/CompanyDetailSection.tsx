@@ -78,7 +78,7 @@ export function CompanyDetailSection({
   return (
     <section
       className={cn('py-20 lg:py-32 relative overflow-hidden', className)}
-      style={{ fontFamily: theme.fonts.body }}
+      style={{ fontFamily: theme.fonts.body, backgroundColor: theme.colors.pageBackground }}
     >
       <div className="absolute inset-0" style={theme.styles.sectionGradientBgAlt} />
 
@@ -200,12 +200,6 @@ export function CompanyDetailSection({
                                 fill
                                 sizes={IMAGE_SIZES.sectionWide}
                                 className="object-cover group-hover:scale-110 transition-transform duration-700"
-                              />
-                              <div
-                                className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent transition-all duration-500"
-                                style={{
-                                  background: `linear-gradient(to bottom right, transparent, color-mix(in srgb, ${theme.colors.primaryButton} 10%, transparent))`,
-                                }}
                               />
                             </div>
                           </div>

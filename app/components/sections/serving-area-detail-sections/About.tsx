@@ -152,7 +152,7 @@ export const About: React.FC<AboutProps> = ({ about, className }) => {
     <section
       className={cn('relative border-t', className)}
       style={{
-        backgroundColor: colors.sectionBackgroundLight,
+        backgroundColor: colors.pageBackground,
         borderColor,
         fontFamily: fonts.body,
       }}
@@ -252,12 +252,6 @@ export const About: React.FC<AboutProps> = ({ about, className }) => {
                   sizes={IMAGE_SIZES.sectionWide}
                   className="object-cover"
                   priority={false}
-                />
-                <div
-                  className="pointer-events-none absolute inset-0"
-                  style={{
-                    background: `linear-gradient(135deg, transparent 50%, color-mix(in srgb, ${colors.primaryButton} 8%, transparent))`,
-                  }}
                 />
               </div>
             </div>

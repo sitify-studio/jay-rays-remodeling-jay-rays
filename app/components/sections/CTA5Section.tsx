@@ -35,14 +35,6 @@ export const CTA5Section: React.FC<CTA5SectionProps> = ({ cta5Section, className
         fontFamily: themeFonts.body,
       }}
     >
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background: bgUrl
-            ? 'radial-gradient(ellipse 120% 80% at 20% 40%, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.25) 45%, rgba(0,0,0,0.75) 100%)'
-            : `radial-gradient(ellipse at 30% 20%, color-mix(in srgb, ${themeColors.primaryButton} 22%, transparent), transparent 55%)`,
-        }}
-      />
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[length:56px_56px] opacity-40" />
 
       <div className="relative container mx-auto px-6 lg:px-12">

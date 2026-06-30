@@ -57,7 +57,7 @@ export function HeroSection({ hero, page, className }: HeroSectionProps) {
   const primaryBorder = withAlpha(primary, 0.2);
   const secondarySoft = colors.secondaryText;
   const secondaryMuted = withAlpha(colors.mainText, 0.65);
-  const surface = colors.sectionBackgroundLight;
+  const surface = colors.pageBackground;
 
   const { ref: titleRef, isVisible: titleVisible } = useScrollAnimation<HTMLHeadingElement>({ threshold: 0.3 });
   const { ref: subtitleRef, isVisible: subtitleVisible } = useScrollAnimation<HTMLHeadingElement>({ threshold: 0.3 });
@@ -76,8 +76,8 @@ export function HeroSection({ hero, page, className }: HeroSectionProps) {
   return (
     <section
       id="home"
-      className={cn('relative pt-6 pb-8 lg:pt-8 lg:pb-12 overflow-hidden bg-white', className)}
-      style={themeVars}
+      className={cn('relative pt-6 pb-8 lg:pt-8 lg:pb-12 overflow-hidden', className)}
+      style={{ ...themeVars, backgroundColor: colors.pageBackground }}
     >
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {[...Array(6)].map((_, i) => (
@@ -161,9 +161,9 @@ export function HeroSection({ hero, page, className }: HeroSectionProps) {
             <div className="grid grid-cols-2 gap-4 h-[500px]">
               <div
                 className={`row-span-2 rounded-2xl overflow-hidden border hover:scale-[1.03] transition-all duration-500 group cursor-pointer ${imageGridVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-                style={{ transitionDelay: '200ms', backgroundColor: '#ffffff', borderColor: primaryBorder }}
+                style={{ transitionDelay: '200ms', backgroundColor: colors.pageBackground, borderColor: primaryBorder }}
               >
-                <div className="w-full h-full flex flex-col items-center justify-between p-6 relative overflow-hidden bg-white">
+                <div className="w-full h-full flex flex-col items-center justify-between p-6 relative overflow-hidden" style={{ backgroundColor: colors.pageBackground }}>
                   <div className="relative flex-1 flex items-center justify-center w-full">
                     <svg viewBox="0 0 120 140" className="w-28 h-32 transition-transform duration-700 group-hover:scale-105" aria-hidden>
                       <rect
@@ -201,13 +201,13 @@ export function HeroSection({ hero, page, className }: HeroSectionProps) {
 
               <div
                 className={`rounded-2xl overflow-hidden border hover:scale-[1.03] hover:rotate-1 transition-all duration-500 group cursor-pointer ${imageGridVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-                style={{ transitionDelay: '400ms', backgroundColor: '#ffffff', borderColor: primaryBorder }}
+                style={{ transitionDelay: '400ms', backgroundColor: colors.pageBackground, borderColor: primaryBorder }}
               >
                 <div className="w-full h-full flex flex-col items-start justify-between p-6 relative">
                   <div className="w-full flex-1 flex items-center justify-center relative">
                     <div
-                      className="w-24 h-24 bg-white rounded flex items-center justify-center relative overflow-hidden transition-colors duration-500 border"
-                      style={{ borderColor: primaryBorder }}
+                      className="w-24 h-24 rounded flex items-center justify-center relative overflow-hidden transition-colors duration-500 border"
+                      style={{ borderColor: primaryBorder, backgroundColor: colors.pageBackground }}
                     >
                       <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent_49%,rgba(0,0,0,0.04)_50%,transparent_51%)] bg-[length:16px_16px]" />
                       <svg className="absolute w-14 h-14" style={{ color: secondaryMuted }} viewBox="0 0 60 60" fill="none">
@@ -235,7 +235,7 @@ export function HeroSection({ hero, page, className }: HeroSectionProps) {
 
               <div
                 className={`rounded-2xl overflow-hidden border hover:scale-[1.03] hover:-rotate-1 transition-all duration-500 group cursor-pointer ${imageGridVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-                style={{ transitionDelay: '600ms', backgroundColor: '#ffffff', borderColor: primaryBorder }}
+                style={{ transitionDelay: '600ms', backgroundColor: colors.pageBackground, borderColor: primaryBorder }}
               >
                 <div className="w-full h-full flex flex-col items-start justify-between p-6 relative">
                   <div className="w-full flex-1 flex items-center justify-center relative">

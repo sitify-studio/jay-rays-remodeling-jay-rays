@@ -1,5 +1,117 @@
 /** Shared slug + link helpers for service area pages. */
 
+import type { Service, ServiceAreaPage } from '@/app/lib/types';
+
+export type ServingAreaNavLink = {
+  id: string;
+  label: string;
+  href: string;
+};
+
+function formatAreaLabel(city: string, region: string): string {
+  if (!region) return city;
+  if (city.toLowerCase().includes(region.toLowerCase())) return city;
+  return `${city}, ${region}`;
+}
+
+function resolveSlugForAreaPage(page: ServiceAreaPage, services: Service[]): string {
+  const fromPage = getServiceSlugFromAreaPage(page);
+  if (fromPage) return fromPage;
+
+  const embedded = (page as { service?: { slug?: string; _id?: string } }).service;
+  if (embedded?.slug) return resolveServiceSlug({ slug: embedded.slug });
+  if (embedded?._id) {
+    const svc = services.find((s) => s._id === embedded._id);
+    if (svc) return resolveServiceSlug(svc);
+  }
+
+  const serviceRef = page.serviceId as string | { slug?: string; _id?: string } | undefined;
+  if (serviceRef && typeof serviceRef === 'object' && serviceRef.slug) {
+    return resolveServiceSlug({ slug: serviceRef.slug });
+  }
+  if (typeof serviceRef === 'string') {
+    const svc = services.find((s) => s._id === serviceRef);
+    if (svc) return resolveServiceSlug(svc);
+  }
+  if (serviceRef && typeof serviceRef === 'object' && serviceRef._id) {
+    const svc = services.find((s) => s._id === serviceRef._id);
+    if (svc) return resolveServiceSlug(svc);
+  }
+  return '';
+}
+
+function pageMatchesService(page: ServiceAreaPage, service: Service, services: Service[]): boolean {
+  const normSlug = normalizeSlug(resolveServiceSlug(service));
+  const pageServiceSlug = resolveSlugForAreaPage(page, services);
+  if (pageServiceSlug && normalizeSlug(pageServiceSlug) === normSlug) return true;
+
+  const serviceRef = page.serviceId as string | { _id?: string } | undefined;
+  if (typeof serviceRef === 'string' && serviceRef === service._id) return true;
+  if (serviceRef && typeof serviceRef === 'object' && serviceRef._id === service._id) return true;
+
+  const embedded = (page as { service?: { _id?: string } }).service;
+  if (embedded?._id && embedded._id === service._id) return true;
+
+  return false;
+}
+
+function resolvePageCity(page: ServiceAreaPage): string {
+  const city = page.city?.trim();
+  if (city) return city;
+  const slug = page.slug?.trim();
+  if (!slug) return '';
+  return slug
+    .split('-')
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ');
+}
+
+/** Published serving-area page links for a single service (header nav, etc.). */
+export function getServingAreaLinksForService(
+  service: Service,
+  serviceAreaPages: ServiceAreaPage[] | undefined,
+  services: Service[]
+): ServingAreaNavLink[] {
+  const normSlug = normalizeSlug(resolveServiceSlug(service));
+  const result: ServingAreaNavLink[] = [];
+  const seen = new Set<string>();
+
+  const pushArea = (city: string, region: string, pageSlug?: string) => {
+    const key = `${city.toLowerCase()}|${region.toLowerCase()}|${pageSlug || ''}`;
+    if (!city || seen.has(key)) return;
+    seen.add(key);
+    const areaRef = pageSlug ? { city, region, slug: pageSlug } : { city, region };
+    result.push({
+      id: `${normSlug}-${key}`,
+      label: formatAreaLabel(city, region),
+      href: getServiceAreaPageHref(normSlug, areaRef, serviceAreaPages),
+    });
+  };
+
+  const collectFromPages = (filterPublished: boolean) => {
+    (serviceAreaPages ?? []).forEach((page) => {
+      if (filterPublished && page.status !== 'published') return;
+      if (!pageMatchesService(page, service, services)) return;
+      const city = resolvePageCity(page);
+      if (!city) return;
+      pushArea(city, (page.region || '').trim(), page.slug?.trim());
+    });
+  };
+
+  collectFromPages(true);
+  if (result.length === 0) collectFromPages(false);
+
+  if (result.length === 0) {
+    (service.serviceAreas ?? []).forEach((area) => {
+      const city = getAreaCity(area);
+      if (!city) return;
+      pushArea(city, getAreaRegion(area));
+    });
+  }
+
+  return result.sort((a, b) => a.label.localeCompare(b.label));
+}
+
 export function normalizeSlug(value: string): string {
   return String(value || '')
     .trim()

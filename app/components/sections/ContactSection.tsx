@@ -87,13 +87,6 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
         fontFamily: 'var(--wb-body-font, inherit)',
       }}
     >
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: `linear-gradient(135deg, ${colors.sectionBackgroundLight} 0%, ${colors.pageBackground} 50%, color-mix(in srgb, ${colors.primaryButton} 8%, ${colors.pageBackground}) 100%)`,
-        }}
-      />
-
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {[...Array(6)].map((_, i) => (
           <div
@@ -187,38 +180,19 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
             </p>
           )}
 
-          {showForm && (
-            <button
-              type="button"
-              onClick={() => setIsFormOpen(true)}
-              className="group mt-10 flex w-full max-w-xs items-center justify-between rounded-full px-8 py-4 text-sm font-medium uppercase tracking-wide transition-all duration-500 hover:shadow-2xl sm:max-w-sm"
-              style={{
-                backgroundColor: colors.primaryButton,
-                color: 'var(--wb-text-on-dark, #fff)',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = colors.hoverActive;
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = colors.primaryButton;
-              }}
-            >
-              <span>Open Form</span>
-              <ArrowRight size={18} className="transition-transform group-hover:translate-x-0.5" />
-            </button>
-          )}
         </div>
 
         <ContactSideForm isOpen={isFormOpen} onClose={() => setIsFormOpen(false)} />
 
         {(showContactInfo || showMap) && (
-          <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-2 lg:gap-16">
+          <div className="grid grid-cols-1 items-stretch gap-12 lg:grid-cols-2 lg:gap-16">
             {showContactInfo && (
               <div
-                className="rounded-3xl border backdrop-blur-sm p-8 lg:p-10 shadow-lg space-y-10"
+                className="flex h-full min-h-[420px] flex-col gap-10 rounded-3xl border border-b-2 p-8 shadow-lg lg:min-h-[480px] lg:p-10"
                 style={{
-                  borderColor: 'color-mix(in srgb, var(--wb-primary) 10%, transparent)',
-                  backgroundColor: 'color-mix(in srgb, var(--wb-card-bg-light) 90%, transparent)',
+                  backgroundColor: colors.pageBackground,
+                  borderColor: 'color-mix(in srgb, var(--wb-primary) 12%, #e5e7eb)',
+                  borderBottomColor: 'color-mix(in srgb, var(--wb-primary) 28%, #d1d5db)',
                 }}
               >
                 <div>
@@ -236,7 +210,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                   />
                 </div>
 
-                <div className="grid grid-cols-1 gap-10 sm:grid-cols-2">
+                <div className="grid flex-1 grid-cols-1 content-start gap-10 sm:grid-cols-2">
                   {(address?.street || address?.city) && (
                     <div className="space-y-4">
                       <span
@@ -338,8 +312,8 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                       <div
                         className="space-y-2 rounded-2xl border p-4"
                         style={{
-                          borderColor: 'color-mix(in srgb, var(--wb-primary) 10%, transparent)',
-                          backgroundColor: 'color-mix(in srgb, var(--wb-section-bg-light) 50%, transparent)',
+                          borderColor: 'color-mix(in srgb, var(--wb-primary) 12%, #e5e7eb)',
+                          backgroundColor: colors.pageBackground,
                         }}
                       >
                         {businessHours.hours.map((day) => (
@@ -359,30 +333,53 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
             )}
 
             {showMap && (
-              <div
-                className="relative aspect-[4/3] w-full overflow-hidden rounded-3xl border shadow-lg"
-                style={{
-                  borderColor: 'color-mix(in srgb, var(--wb-primary) 10%, transparent)',
-                }}
-              >
-                {site?.business?.coordinates?.latitude != null &&
-                site?.business?.coordinates?.longitude != null ? (
-                  <iframe
-                    title="Office Location"
-                    width="100%"
-                    height="100%"
-                    className="h-full w-full border-0 grayscale contrast-[1.05] opacity-90 transition-all duration-700 hover:grayscale-0"
-                    src={`https://maps.google.com/maps?q=${site.business.coordinates.latitude},${site.business.coordinates.longitude}&z=15&output=embed`}
-                    allowFullScreen
-                    loading="lazy"
-                  />
-                ) : (
-                  <div
-                    className="flex h-full min-h-[280px] items-center justify-center text-sm wb-text-on-light-secondary"
-                    style={{ backgroundColor: colors.sectionBackgroundLight }}
+              <div className="flex h-full min-h-[420px] flex-col gap-6 lg:min-h-[480px]">
+                <div
+                  className="relative min-h-0 flex-1 overflow-hidden rounded-3xl border shadow-lg"
+                  style={{
+                    borderColor: 'color-mix(in srgb, var(--wb-primary) 10%, transparent)',
+                  }}
+                >
+                  {site?.business?.coordinates?.latitude != null &&
+                  site?.business?.coordinates?.longitude != null ? (
+                    <iframe
+                      title="Office Location"
+                      width="100%"
+                      height="100%"
+                      className="absolute inset-0 h-full w-full border-0 grayscale contrast-[1.05] opacity-90 transition-all duration-700 hover:grayscale-0"
+                      src={`https://maps.google.com/maps?q=${site.business.coordinates.latitude},${site.business.coordinates.longitude}&z=15&output=embed`}
+                      allowFullScreen
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div
+                      className="flex h-full min-h-[280px] items-center justify-center text-sm wb-text-on-light-secondary"
+                      style={{ backgroundColor: colors.pageBackground }}
+                    >
+                      Map coordinates not configured
+                    </div>
+                  )}
+                </div>
+
+                {showForm && (
+                  <button
+                    type="button"
+                    onClick={() => setIsFormOpen(true)}
+                    className="group flex w-full shrink-0 items-center justify-between rounded-full px-8 py-4 text-sm font-medium uppercase tracking-wide transition-all duration-500 hover:shadow-2xl"
+                    style={{
+                      backgroundColor: colors.primaryButton,
+                      color: 'var(--wb-text-on-dark, #fff)',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = colors.hoverActive;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = colors.primaryButton;
+                    }}
                   >
-                    Map coordinates not configured
-                  </div>
+                    <span>Open Form</span>
+                    <ArrowRight size={18} className="transition-transform group-hover:translate-x-0.5" />
+                  </button>
                 )}
               </div>
             )}

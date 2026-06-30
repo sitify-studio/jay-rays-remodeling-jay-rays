@@ -129,10 +129,6 @@ function GalleryTile({ image, index, total, visible, onOpen }: GalleryTileProps)
         }
         className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
       />
-      <div
-        className="absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-focus-visible:opacity-100"
-        style={styles.imageOverlay}
-      />
       <div className="absolute inset-x-0 bottom-0 translate-y-2 p-4 opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:opacity-100 sm:p-5">
         <span
           className="mb-2 inline-block rounded-full px-3 py-1 text-[10px] font-medium uppercase tracking-widest backdrop-blur-sm"
@@ -312,7 +308,7 @@ export function GallerySection({ gallerySection, className }: GallerySectionProp
     <section
       id="gallery"
       className={cn('relative overflow-hidden py-20 lg:py-32', className)}
-      style={{ fontFamily: fonts.body }}
+      style={{ backgroundColor: colors.pageBackground, fontFamily: fonts.body }}
     >
       <div className="absolute inset-0" style={styles.sectionGradientBgSoft} />
 

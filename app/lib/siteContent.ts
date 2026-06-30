@@ -91,7 +91,63 @@ const PAGE_TYPE_PATHS: Record<Page['pageType'], string> = {
   'service-list': '/services',
   'blog-list': '/blog',
   'project-detail': '/project-detail',
+  testimonials: '/testimonials',
+  gallery: '/gallery',
 };
+
+/** Preferred nav order for published CMS pages (header + footer). */
+const NAV_PAGE_TYPE_ORDER: Page['pageType'][] = [
+  'home',
+  'about',
+  'service-list',
+  'blog-list',
+  'project-detail',
+  'testimonials',
+  'gallery',
+  'contact',
+];
+
+export function isPublishedPage(page: Page): boolean {
+  if (page.status === 'published') return true;
+  // Public API listings may omit status; treat non-draft/archived as visible.
+  if (!page.status) return true;
+  return page.status !== 'draft' && page.status !== 'archived';
+}
+
+function getOrderedPublishedPages(
+  pages?: Page[],
+  options?: { excludeHome?: boolean }
+): Page[] {
+  const excludeHome = options?.excludeHome ?? false;
+  const published = pages?.filter((p) => isPublishedPage(p) && p.name?.trim()) ?? [];
+  const orderedPages: Page[] = [];
+  const seenIds = new Set<string>();
+
+  for (const type of NAV_PAGE_TYPE_ORDER) {
+    if (excludeHome && type === 'home') continue;
+    const page = published.find((p) => p.pageType === type);
+    if (page && !seenIds.has(page._id)) {
+      orderedPages.push(page);
+      seenIds.add(page._id);
+    }
+  }
+
+  const sortedRest = [...published].sort(
+    (a, b) =>
+      ((a as Page & { order?: number }).order ?? 0) -
+      ((b as Page & { order?: number }).order ?? 0)
+  );
+
+  for (const page of sortedRest) {
+    if (excludeHome && page.pageType === 'home') continue;
+    if (!seenIds.has(page._id)) {
+      orderedPages.push(page);
+      seenIds.add(page._id);
+    }
+  }
+
+  return orderedPages;
+}
 
 /** Slug → path when the app uses a dedicated route folder (not `[pageSlug]`). */
 const SLUG_PATH_ALIASES: Record<string, string> = {
@@ -127,6 +183,7 @@ function normalizePageSlug(slug?: string): string {
 export const TESTIMONIALS_ROUTE = '/testimonials';
 
 export function isTestimonialsPage(page: Page): boolean {
+  if (page.pageType === 'testimonials') return true;
   const slug = normalizePageSlug(page.slug);
   const name = (page.name || '').trim().toLowerCase();
   if (
@@ -161,15 +218,7 @@ export function getTestimonialsNavItem(pages?: Page[]): HeaderNavItem {
 }
 
 export function getPublishedNavPages(pages?: Page[]): Page[] {
-  return (
-    pages
-      ?.filter((p) => p.status === 'published' && p.pageType !== 'home')
-      .sort(
-        (a, b) =>
-          ((a as Page & { order?: number }).order ?? 0) -
-          ((b as Page & { order?: number }).order ?? 0)
-      ) ?? []
-  );
+  return getOrderedPublishedPages(pages, { excludeHome: true });
 }
 
 export type HeaderNavItem = {
@@ -210,29 +259,18 @@ export function splitHeaderNavItems(
 }
 
 export function getHeaderNavItems(pages?: Page[]): HeaderNavItem[] {
-  const published = getPublishedNavPages(pages);
+  const orderedPages = getOrderedPublishedPages(pages);
   const seenHrefs = new Set<string>();
   const items: HeaderNavItem[] = [];
 
-  for (const p of published) {
-    if (isTestimonialsPage(p)) continue;
+  for (const p of orderedPages) {
     const href = getPageHref(p);
     if (seenHrefs.has(href)) continue;
     seenHrefs.add(href);
-    const item = { id: p._id, name: p.name, href };
-    if (isTestimonialsNavItem(item)) continue;
-    items.push(item);
+    items.push({ id: p._id, name: p.name.trim(), href });
   }
 
-  return items
-    .filter((item) => !isTestimonialsNavItem(item))
-    .sort((a, b) => {
-    const pageA = pages?.find((p) => getPageHref(p) === a.href);
-    const pageB = pages?.find((p) => getPageHref(p) === b.href);
-    const orderA = (pageA as Page & { order?: number })?.order ?? 999;
-    const orderB = (pageB as Page & { order?: number })?.order ?? 999;
-    return orderA - orderB;
-  });
+  return items;
 }
 
 export type FooterNavLink = {
@@ -241,48 +279,22 @@ export type FooterNavLink = {
   href: string;
 };
 
-const FOOTER_PAGE_TYPE_ORDER: Page['pageType'][] = [
-  'home',
-  'about',
-  'service-list',
-  'blog-list',
-  'project-detail',
-  'contact',
+/** Extra app routes when no dedicated CMS page exists in the list. */
+const EXTRA_FOOTER_NAV: { slug: string; pageType?: Page['pageType']; href: string; defaultName: string }[] = [
+  { slug: 'testimonials', pageType: 'testimonials', href: TESTIMONIALS_ROUTE, defaultName: 'Testimonials' },
+  { slug: 'gallery', pageType: 'gallery', href: '/gallery', defaultName: 'Gallery' },
 ];
 
-/** Extra app routes when no dedicated CMS page exists in the list. */
-const EXTRA_FOOTER_NAV: { slug: string; href: string; defaultName: string }[] = [
-  { slug: 'testimonials', href: TESTIMONIALS_ROUTE, defaultName: 'Testimonials' },
-  { slug: 'gallery', href: '/gallery', defaultName: 'Gallery' },
-];
+function findCmsPageForExtraNav(pages: Page[], extra: (typeof EXTRA_FOOTER_NAV)[number]): Page | undefined {
+  return pages.find(
+    (p) => p.pageType === extra.pageType || normalizePageSlug(p.slug) === extra.slug
+  );
+}
 
 /** All published pages for footer Explore — same on every route (ignores per-page footer link overrides). */
 export function getFooterNavLinks(pages?: Page[]): FooterNavLink[] {
-  const published = pages?.filter((p) => p.status === 'published' && p.name?.trim()) ?? [];
-  const orderedPages: Page[] = [];
-  const seenIds = new Set<string>();
-
-  for (const type of FOOTER_PAGE_TYPE_ORDER) {
-    const page = published.find((p) => p.pageType === type);
-    if (page && !seenIds.has(page._id)) {
-      orderedPages.push(page);
-      seenIds.add(page._id);
-    }
-  }
-
-  const sortedRest = [...published].sort(
-    (a, b) =>
-      ((a as Page & { order?: number }).order ?? 0) -
-      ((b as Page & { order?: number }).order ?? 0)
-  );
-
-  for (const page of sortedRest) {
-    if (!seenIds.has(page._id)) {
-      orderedPages.push(page);
-      seenIds.add(page._id);
-    }
-  }
-
+  const published = pages?.filter((p) => isPublishedPage(p) && p.name?.trim()) ?? [];
+  const orderedPages = getOrderedPublishedPages(pages);
   const seenHrefs = new Set<string>();
   const links: FooterNavLink[] = [];
 
@@ -295,7 +307,7 @@ export function getFooterNavLinks(pages?: Page[]): FooterNavLink[] {
 
   for (const extra of EXTRA_FOOTER_NAV) {
     if (seenHrefs.has(extra.href)) continue;
-    const cmsPage = published.find((p) => normalizePageSlug(p.slug) === extra.slug);
+    const cmsPage = findCmsPageForExtraNav(published, extra);
     links.push({
       id: cmsPage?._id ?? `nav-${extra.slug}`,
       label: cmsPage?.name?.trim() || extra.defaultName,

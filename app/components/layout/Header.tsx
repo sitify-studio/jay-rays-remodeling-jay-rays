@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useWebBuilder } from '@/app/providers/WebBuilderProvider';
 import { getBrandName, getHeaderNavItems } from '@/app/lib/siteContent';
 import {
@@ -10,7 +10,6 @@ import {
   resolveServiceSlug,
 } from '@/app/lib/serviceAreaSlugs';
 import { getImageSrc } from '@/app/lib/utils';
-import { useThemeColors } from '@/app/hooks/useTheme';
 
 const SERVICES_HREF = '/services';
 
@@ -26,6 +25,24 @@ const navLinkClass =
 
 const mobileNavLinkClass =
   'px-3 py-2.5 text-sm font-medium text-[var(--wb-text-main)] rounded-lg transition-colors hover:text-[var(--wb-primary)] hover:bg-[color-mix(in_srgb,var(--wb-primary)_10%,transparent)]';
+
+const dropdownItemClass =
+  'flex w-full items-center justify-between gap-3 px-4 py-2.5 text-sm font-medium text-[var(--wb-text-main)] transition-colors hover:bg-[color-mix(in_srgb,var(--wb-primary)_10%,transparent)] hover:text-[var(--wb-primary)]';
+
+const dropdownItemActiveClass =
+  'bg-[color-mix(in_srgb,var(--wb-primary)_10%,transparent)] text-[var(--wb-primary)]';
+
+const dropdownPanelClass =
+  'overflow-hidden rounded-xl border border-gray-100 bg-[var(--wb-page-bg,white)] shadow-xl ring-1 ring-black/5';
+
+const submenuPanelClass =
+  'min-w-[15rem] shrink-0 bg-[color-mix(in_srgb,var(--wb-primary)_5%,var(--wb-page-bg,white))] px-2 py-3';
+
+const submenuItemClass =
+  'flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm text-[var(--wb-text-main)] transition-colors hover:bg-[var(--wb-page-bg,white)] hover:text-[var(--wb-primary)] hover:shadow-sm';
+
+const submenuHeaderClass =
+  'mb-2 border-b border-gray-200/70 px-2.5 pb-2.5';
 
 type ServiceNavItem = {
   id: string;
@@ -56,9 +73,81 @@ function ChevronRightIcon({ className }: { className?: string }) {
   );
 }
 
+function ChevronLeftIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+    </svg>
+  );
+}
+
+function MapPinIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.75}
+        d="M12 21s6-5.196 6-10a6 6 0 10-12 0c0 4.804 6 10 6 10z"
+      />
+      <circle cx="12" cy="11" r="2.25" strokeWidth={1.75} />
+    </svg>
+  );
+}
+
+function ServicesAreasSubmenu({
+  service,
+  submenuOnLeft,
+  onNavigate,
+}: {
+  service: ServiceNavItem;
+  submenuOnLeft: boolean;
+  onNavigate?: () => void;
+}) {
+  return (
+    <div
+      className={`${submenuPanelClass} ${
+        submenuOnLeft ? 'border-r border-gray-200/70' : 'border-l border-gray-200/70'
+      }`}
+      role="menu"
+    >
+      <div className={submenuHeaderClass}>
+        <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--wb-text-secondary)]">
+          Serving Areas
+        </p>
+        <p className="mt-0.5 truncate text-sm font-semibold text-[var(--wb-primary)]">{service.name}</p>
+      </div>
+
+      <ul className="space-y-0.5">
+        {service.areas.map((area) => (
+          <li key={area.id}>
+            <Link
+              href={area.href}
+              className={submenuItemClass}
+              role="menuitem"
+              onClick={onNavigate}
+            >
+              <MapPinIcon className="h-4 w-4 shrink-0 text-[var(--wb-primary)] opacity-80" />
+              <span className="truncate">{area.label}</span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+
+      <Link
+        href={service.href}
+        className="mt-2.5 flex items-center gap-1 border-t border-gray-200/70 px-2.5 pt-2.5 text-xs font-semibold text-[var(--wb-primary)] transition-colors hover:text-[var(--wb-primary-hover,var(--wb-primary))]"
+        onClick={onNavigate}
+      >
+        View service details
+        <ChevronRightIcon className="h-3.5 w-3.5" />
+      </Link>
+    </div>
+  );
+}
+
 export function Header() {
   const { site, pages, services, serviceAreaPages } = useWebBuilder();
-  const colors = useThemeColors();
   const businessName = useMemo(
     () => getBrandName(site) || "Jay Ray's Custom Remodeling",
     [site]
@@ -96,9 +185,43 @@ export function Header() {
   const [activeServiceId, setActiveServiceId] = useState<string | null>(null);
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   const [mobileExpandedServiceId, setMobileExpandedServiceId] = useState<string | null>(null);
+  const servicesTriggerRef = useRef<HTMLDivElement>(null);
+  const [dropdownAlign, setDropdownAlign] = useState<'left' | 'right'>('left');
+  const [submenuOnLeft, setSubmenuOnLeft] = useState(false);
 
   const hoveredService =
     serviceLinks.find((s) => s.id === activeServiceId) ?? activeService;
+
+  const hasSubmenu = Boolean(hoveredService && hoveredService.areas.length > 0);
+
+  useLayoutEffect(() => {
+    if (!servicesMenuOpen || !servicesTriggerRef.current) return;
+
+    const trigger = servicesTriggerRef.current.getBoundingClientRect();
+    const primaryWidth = 224; // 14rem
+    const submenuWidth = hasSubmenu ? 240 : 0; // 15rem
+    const totalWidth = primaryWidth + submenuWidth;
+    const padding = 16;
+    const spaceOnRight = window.innerWidth - trigger.left - padding;
+    const spaceOnLeft = trigger.right - padding;
+
+    if (totalWidth > spaceOnRight) {
+      setDropdownAlign('right');
+      setSubmenuOnLeft(hasSubmenu);
+    } else if (hasSubmenu && submenuWidth > spaceOnRight - primaryWidth) {
+      setDropdownAlign('left');
+      setSubmenuOnLeft(true);
+    } else {
+      setDropdownAlign('left');
+      setSubmenuOnLeft(false);
+    }
+
+    // If still overflowing both sides, prefer right anchor with submenu on left
+    if (totalWidth > spaceOnRight && totalWidth > spaceOnLeft && hasSubmenu) {
+      setDropdownAlign('right');
+      setSubmenuOnLeft(true);
+    }
+  }, [servicesMenuOpen, hasSubmenu, hoveredService?.id]);
 
   const closeMenu = () => {
     setIsOpen(false);
@@ -107,13 +230,6 @@ export function Header() {
     setServicesMenuOpen(false);
     setActiveServiceId(null);
   };
-
-  const menuPanelDark = colors.sectionBackgroundDark;
-  const menuTextLight = 'var(--wb-text-on-dark, #fff)';
-  const menuHoverBg = colors.pageBackground;
-  const menuHoverText = colors.mainText;
-  const submenuBg = colors.pageBackground;
-  const submenuText = colors.mainText;
 
   return (
     <nav className="fixed top-0 z-50 w-full border-b border-gray-100 bg-white/95 backdrop-blur-md">
@@ -135,6 +251,7 @@ export function Header() {
               isServicesNavItem(link) && serviceLinks.length > 0 ? (
                 <div
                   key={link.href}
+                  ref={servicesTriggerRef}
                   className="relative"
                   onMouseEnter={() => {
                     setServicesMenuOpen(true);
@@ -147,6 +264,8 @@ export function Header() {
                   onMouseLeave={() => {
                     setServicesMenuOpen(false);
                     setActiveServiceId(null);
+                    setDropdownAlign('left');
+                    setSubmenuOnLeft(false);
                   }}
                 >
                   <Link
@@ -162,17 +281,24 @@ export function Header() {
                   </Link>
 
                   {servicesMenuOpen && (
-                    <div className="absolute left-0 top-full z-50 pt-1" role="menu">
-                      <div className="flex items-stretch shadow-2xl">
-                        {/* Primary panel — services list */}
-                        <div
-                          className="min-w-[15.5rem] py-2"
-                          style={{ backgroundColor: menuPanelDark, color: menuTextLight }}
-                        >
+                    <div
+                      className={`absolute top-full z-50 pt-1.5 ${
+                        dropdownAlign === 'right' ? 'right-0' : 'left-0'
+                      }`}
+                      role="menu"
+                    >
+                      <div
+                        className={`flex items-stretch ${dropdownPanelClass}${
+                          submenuOnLeft && hasSubmenu ? ' flex-row-reverse' : ''
+                        }`}
+                      >
+                        <div className="min-w-[14rem] shrink-0 py-1.5">
+                          <p className="px-4 pb-1 pt-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--wb-text-secondary)]">
+                            Services
+                          </p>
                           <Link
                             href={link.href}
-                            className="flex items-center justify-between px-5 py-3 text-sm font-medium transition-colors"
-                            style={{ color: menuTextLight }}
+                            className={dropdownItemClass}
                             role="menuitem"
                             onMouseEnter={() => setActiveServiceId(null)}
                           >
@@ -181,46 +307,29 @@ export function Header() {
                           {serviceLinks.map((service) => {
                             const isActive = activeServiceId === service.id;
                             const hasAreas = service.areas.length > 0;
+                            const AreaChevron = submenuOnLeft && hasSubmenu ? ChevronLeftIcon : ChevronRightIcon;
                             return (
                               <Link
                                 key={service.id}
                                 href={service.href}
-                                className="flex items-center justify-between gap-3 px-5 py-3 text-sm font-medium transition-colors"
-                                style={{
-                                  backgroundColor: isActive ? menuHoverBg : 'transparent',
-                                  color: isActive ? menuHoverText : menuTextLight,
-                                }}
+                                className={`${dropdownItemClass}${isActive ? ` ${dropdownItemActiveClass}` : ''}`}
                                 role="menuitem"
                                 onMouseEnter={() => setActiveServiceId(hasAreas ? service.id : null)}
                               >
-                                <span>{service.name}</span>
+                                <span className="truncate">{service.name}</span>
                                 {hasAreas && (
-                                  <ChevronRightIcon className="h-3.5 w-3.5 shrink-0 opacity-80" />
+                                  <AreaChevron className="h-3.5 w-3.5 shrink-0 opacity-60" />
                                 )}
                               </Link>
                             );
                           })}
                         </div>
 
-                        {/* Secondary panel — serving areas */}
-                        {hoveredService && hoveredService.areas.length > 0 && (
-                          <div
-                            className="min-w-[13.5rem] border-l border-gray-200 py-2"
-                            style={{ backgroundColor: submenuBg, color: submenuText }}
-                            role="menu"
-                          >
-                            {hoveredService.areas.map((area) => (
-                              <Link
-                                key={area.id}
-                                href={area.href}
-                                className="block px-5 py-3 text-sm transition-colors hover:bg-[color-mix(in_srgb,var(--wb-primary)_8%,transparent)]"
-                                style={{ color: submenuText }}
-                                role="menuitem"
-                              >
-                                {area.label}
-                              </Link>
-                            ))}
-                          </div>
+                        {hasSubmenu && hoveredService && (
+                          <ServicesAreasSubmenu
+                            service={hoveredService}
+                            submenuOnLeft={submenuOnLeft}
+                          />
                         )}
                       </div>
                     </div>
@@ -269,15 +378,11 @@ export function Header() {
                       />
                     </button>
                     {mobileServicesOpen && (
-                      <div
-                        className="ml-1 mt-1 overflow-hidden rounded-lg"
-                        style={{ backgroundColor: menuPanelDark }}
-                      >
+                      <div className={`ml-1 mt-1 ${dropdownPanelClass}`}>
                         <Link
                           href={link.href}
                           onClick={closeMenu}
-                          className="block px-4 py-3 text-sm font-medium"
-                          style={{ color: menuTextLight }}
+                          className={dropdownItemClass}
                         >
                           All Services
                         </Link>
@@ -292,46 +397,50 @@ export function Header() {
                                       current === service.id ? null : service.id
                                     )
                                   }
-                                  className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-medium"
-                                  style={{
-                                    backgroundColor:
-                                      mobileExpandedServiceId === service.id
-                                        ? menuHoverBg
-                                        : 'transparent',
-                                    color:
-                                      mobileExpandedServiceId === service.id
-                                        ? menuHoverText
-                                        : menuTextLight,
-                                  }}
+                                  className={`${dropdownItemClass}${
+                                    mobileExpandedServiceId === service.id
+                                      ? ` ${dropdownItemActiveClass}`
+                                      : ''
+                                  }`}
                                   aria-expanded={mobileExpandedServiceId === service.id}
                                 >
-                                  <span>{service.name}</span>
-                                  <ChevronRightIcon className="h-3.5 w-3.5 shrink-0" />
+                                  <span className="truncate">{service.name}</span>
+                                  <ChevronRightIcon className="h-3.5 w-3.5 shrink-0 opacity-60" />
                                 </button>
                                 {mobileExpandedServiceId === service.id && (
                                   <div
-                                    className="border-t border-white/10 py-1"
-                                    style={{ backgroundColor: submenuBg }}
+                                    className={`mx-2 mb-2 mt-1 rounded-lg border border-gray-200/80 ${submenuPanelClass}`}
                                   >
+                                    <div className={submenuHeaderClass}>
+                                      <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--wb-text-secondary)]">
+                                        Serving Areas
+                                      </p>
+                                      <p className="mt-0.5 truncate text-sm font-semibold text-[var(--wb-primary)]">
+                                        {service.name}
+                                      </p>
+                                    </div>
+                                    <ul className="space-y-0.5">
+                                      {service.areas.map((area) => (
+                                        <li key={area.id}>
+                                          <Link
+                                            href={area.href}
+                                            onClick={closeMenu}
+                                            className={submenuItemClass}
+                                          >
+                                            <MapPinIcon className="h-4 w-4 shrink-0 text-[var(--wb-primary)] opacity-80" />
+                                            <span className="truncate">{area.label}</span>
+                                          </Link>
+                                        </li>
+                                      ))}
+                                    </ul>
                                     <Link
                                       href={service.href}
                                       onClick={closeMenu}
-                                      className="block px-5 py-2.5 text-xs font-medium"
-                                      style={{ color: submenuText }}
+                                      className="mt-2.5 flex items-center gap-1 border-t border-gray-200/70 px-2.5 pt-2.5 text-xs font-semibold text-[var(--wb-primary)]"
                                     >
-                                      View service
+                                      View service details
+                                      <ChevronRightIcon className="h-3.5 w-3.5" />
                                     </Link>
-                                    {service.areas.map((area) => (
-                                      <Link
-                                        key={area.id}
-                                        href={area.href}
-                                        onClick={closeMenu}
-                                        className="block px-5 py-2.5 text-sm"
-                                        style={{ color: submenuText }}
-                                      >
-                                        {area.label}
-                                      </Link>
-                                    ))}
                                   </div>
                                 )}
                               </>
@@ -339,10 +448,9 @@ export function Header() {
                               <Link
                                 href={service.href}
                                 onClick={closeMenu}
-                                className="block px-4 py-3 text-sm font-medium"
-                                style={{ color: menuTextLight }}
+                                className={dropdownItemClass}
                               >
-                                {service.name}
+                                <span className="truncate">{service.name}</span>
                               </Link>
                             )}
                           </div>

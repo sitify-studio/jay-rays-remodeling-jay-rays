@@ -1,6 +1,23 @@
 User-agent: *
-Allow: /
 
+# Allow Public Pages
+Allow: /
+Allow: /about
+Allow: /contact
+Allow: /testimonials
+Allow: /services
+
+# Service Pages
+Allow: /service/painting
+Allow: /service/drywall-repairs
+Allow: /service/carpentry
+
+# Service Area Pages
+Allow: /service/painting/service-areas/spokane-valley-wa
+Allow: /service/drywall-repairs/service-areas/spokane-valley-wa
+Allow: /service/carpentry/service-areas/spokane-valley-wa
+
+# Block Private/System Routes
 Disallow: /admin/
 Disallow: /dashboard/
 Disallow: /api/

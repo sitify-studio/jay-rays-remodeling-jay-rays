@@ -1,9 +1,25 @@
 [
   {
     "@context": "https://schema.org",
-    "@type": "Organization",
+    "@type": "HomeAndConstructionBusiness",
+    "@id": "https://www.jayraysremodeling.com/#business",
     "name": "Jay Rays Remodeling",
-    "url": "/",
+    "url": "https://www.jayraysremodeling.com",
+    "logo": "https://www.jayraysremodeling.com/logo.png",
+    "image": "https://www.jayraysremodeling.com/og-image.jpg",
+    "description": "Jay Rays Remodeling provides professional home remodeling, painting, drywall repairs, and carpentry services in Spokane Valley, WA and surrounding areas.",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "2405 S Dishman Mica Rd",
+      "addressLocality": "Spokane Valley",
+      "addressRegion": "WA",
+      "postalCode": "99206",
+      "addressCountry": "US"
+    },
+    "areaServed": {
+      "@type": "City",
+      "name": "Spokane Valley"
+    },
     "sameAs": []
   }
 ]

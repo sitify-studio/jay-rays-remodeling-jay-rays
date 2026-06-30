@@ -1,3 +1,13 @@
 User-agent: *
-Disallow:
-Sitemap: /sitemap.xml
+Allow: /
+
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /api/
+Disallow: /login/
+Disallow: /register/
+Disallow: /private/
+Disallow: /_next/
+
+Host: https://www.jayraysremodeling.com
+Sitemap: https://www.jayraysremodeling.com/sitemap.xml

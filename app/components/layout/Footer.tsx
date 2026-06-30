@@ -44,6 +44,43 @@ const FALLBACK_NAV_LINKS = [
   { id: 'contact', label: 'Contact', href: '/contact-us' },
 ] as const;
 
+const LEGAL_LINKS = [
+  { href: '/terms-of-service', label: 'Terms of Service', Icon: ShieldIcon },
+  { href: '/privacy-policy', label: 'Privacy Policy', Icon: DocumentIcon },
+] as const;
+
+const legalLinkClass =
+  'inline-flex items-center gap-2 text-sm text-[var(--wb-text-secondary)] transition-colors hover:text-[var(--wb-primary)]';
+
+function ShieldIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.75}
+        d="M12 3l7.5 3v5.5c0 4.15-2.55 7.95-7.5 9-4.95-1.05-7.5-4.85-7.5-9V6L12 3z"
+      />
+    </svg>
+  );
+}
+
+function DocumentIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.75}
+        d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8l-5-5z"
+      />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M14 3v5h5" />
+      <circle cx="9.5" cy="13" r="1.25" strokeWidth={1.75} />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M9.5 16.5h5" />
+    </svg>
+  );
+}
+
 function isTiptapCopyright(content: unknown): boolean {
   if (!content) return false;
   try {
@@ -285,6 +322,17 @@ export function Footer() {
         </div>
 
         <div className="mt-10 border-t border-gray-100 pt-6">
+          <nav
+            className="mb-5 flex flex-wrap items-center justify-center gap-x-8 gap-y-3"
+            aria-label="Legal"
+          >
+            {LEGAL_LINKS.map(({ href, label, Icon }) => (
+              <Link key={href} href={href} className={legalLinkClass}>
+                <Icon className="h-4 w-4 shrink-0 opacity-80" />
+                {label}
+              </Link>
+            ))}
+          </nav>
           <div className="text-center text-xs leading-relaxed text-[var(--wb-text-secondary)] sm:text-sm">
             <FooterCopyright site={site} />
           </div>
